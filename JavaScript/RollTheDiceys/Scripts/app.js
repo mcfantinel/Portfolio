@@ -9,9 +9,12 @@ GAME RULES:
 
 */
 
-var activePlayer=1;
+var activePlayer=1, numberToWin=100;
 
 
+$('#winNumber').change(function() {
+	numberToWin = parseInt($('.input-win-number').val());
+});
 
 $('.btn-new').click(function() {
 	$('.player-1-panel').removeClass('winner');
@@ -20,19 +23,27 @@ $('.btn-new').click(function() {
 	$('#score-2').text('0');
 	$('#current-1').text('0');
 	$('#current-2').text('0');
+	$('.input-win-number').prop("disabled",false);
 	$('.btn-hold').prop("disabled",false);
 	$('.btn-roll').prop("disabled",false);
+	$('.dice1').attr('src','Images/dice-1.png');
+	$('.dice2').attr('src','Images/dice-1.png');
 });
 
 $('.btn-roll').click(function() {
-	var diceRoll = Math.floor(Math.random()*6) + 1;
-	$('.dice').attr('src','Images/dice-' + diceRoll + '.png');
+	$('.input-win-number').prop("disabled",true);
 
-	if(diceRoll === 1) {
+	var diceRoll = Math.floor(Math.random()*6) + 1;
+	$('.dice1').attr('src','Images/dice-' + diceRoll + '.png');
+
+	var diceRoll2 = Math.floor(Math.random()*6) + 1;
+	$('.dice2').attr('src','Images/dice-' + diceRoll2 + '.png');
+
+	if(diceRoll === 1 || diceRoll2 === 1 || diceRoll === diceRoll2) {
 		$('#current-' + activePlayer).text('0');
 		changeActivePlayers();
 	} else {
-		var currentVal = parseInt($('#current-' + activePlayer).text()) + diceRoll;
+		var currentVal = parseInt($('#current-' + activePlayer).text()) + diceRoll + diceRoll2;
 		$('#current-' + activePlayer).text(currentVal);
 	}
 });
@@ -40,10 +51,10 @@ $('.btn-roll').click(function() {
 $('.btn-hold').click(function() {
 	var updatedScore = parseInt($('#score-' + activePlayer).text()) + parseInt($('#current-' + activePlayer).text());
 	$('#score-' + activePlayer).text(updatedScore);
-	if(updatedScore >= 20) {
+	if(updatedScore >= numberToWin) {
 		$('.player-1-panel').removeClass('active');
 		$('.player-2-panel').removeClass('active');
-		$('.player-2-panel').addClass('winner');
+		$('.player-' + activePlayer + '-panel').addClass('winner');
 		$('.btn-hold').prop("disabled",true);
 		$('.btn-roll').prop("disabled",true);
 	} else {
